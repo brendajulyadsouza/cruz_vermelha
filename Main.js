@@ -1,74 +1,65 @@
-// Menu mobile
 document.addEventListener('DOMContentLoaded', () => {
-   const toggle = document.querySelector('.nav-toggle');
-   const nav = document.querySelector('.nav');
-   if (toggle && nav) {
-     toggle.addEventListener('click', () => {
-       nav.classList.toggle('aberto');
-       const aberto = nav.classList.contains('aberto');
-       toggle.setAttribute('aria-expanded', aberto);
-       toggle.setAttribute('aria-label', aberto ? 'Fechar menu' : 'Abrir menu');
-       toggle.textContent = aberto ? '������������������������������✕' : '���������������☰';
-     });
-     nav.querySelectorAll('a').forEach(link => {
-       link.addEventListener('click', () => {
-         nav.classList.remove('aberto');
-         toggle.textContent = '���������������☰';
-         toggle.setAttribute('aria-label', 'Abrir menu');
-         toggle.setAttribute('aria-expanded', false);
-       });
-     });
-   }
+  const toggle = document.querySelector('.nav-toggle');
+  const nav = document.querySelector('.nav');
 
-   // Fechar menu móvel ao clicar fora dele
-   document.addEventListener('click', (e) => {
-     if (nav && toggle && !nav.contains(e.target) && !toggle.contains(e.target) && nav.classList.contains('aberto')) {
-       nav.classList.remove('aberto');
-       toggle.textContent = '���������������☰';
-       toggle.setAttribute('aria-label', 'Abrir menu');
-       toggle.setAttribute('aria-expanded', false);
-     }
-   });
+  const closeMenu = () => {
+    if (!toggle || !nav) return;
+    nav.classList.remove('open');
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.setAttribute('aria-label', 'Abrir menu');
+    toggle.textContent = '☰';
+  };
 
-   // Fechar menu móvel ao redimensionar para desktop
-   window.addEventListener('resize', () => {
-     if (window.innerWidth > 860 && nav && nav.classList.contains('aberto')) {
-       nav.classList.remove('aberto');
-       toggle.textContent = '���������������☰';
-       toggle.setAttribute('aria-label', 'Abrir menu');
-       toggle.setAttribute('aria-expanded', false);
-     }
-   });
+  if (toggle && nav) {
+    toggle.addEventListener('click', () => {
+      const isOpen = nav.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(isOpen));
+      toggle.setAttribute('aria-label', isOpen ? 'Fechar menu' : 'Abrir menu');
+      toggle.textContent = isOpen ? '×' : '☰';
+    });
 
-   // Fechar menu móvel ao pressionar ESC
-   document.addEventListener('keydown', (e) => {
-     if (e.key === 'Escape' && nav && nav.classList.contains('aberto')) {
-       nav.classList.remove('aberto');
-       toggle.textContent = '���������������☰';
-       toggle.setAttribute('aria-label', 'Abrir menu');
-       toggle.setAttribute('aria-expanded', false);
-     }
-   });
+    nav.querySelectorAll('a').forEach((link) => {
+      link.addEventListener('click', closeMenu);
+    });
 
-   // Seletor de valores na página de doação
-   const botoesValor = document.querySelectorAll('.valor-btn');
-   const inputValor = document.getElementById('valor-personalizado');
-   if (botoesValor.length) {
-     botoesValor.forEach(btn => {
-       btn.addEventListener('click', () => {
-         botoesValor.forEach(b => b.classList.remove('selecionado'));
-         btn.classList.add('selecionado');
-         if (inputValor) inputValor.value = btn.dataset.valor;
-       });
-     });
-   }
+    document.addEventListener('click', (event) => {
+      if (!nav.classList.contains('open')) return;
+      if (!nav.contains(event.target) && !toggle.contains(event.target)) closeMenu();
+    });
 
-   // Envio do formulário de doação (placeholder — ligar a um gateway de pagamento real)
-   const formDoacao = document.getElementById('form-doacao');
-   if (formDoacao) {
-     formDoacao.addEventListener('submit', (e) => {
-       e.preventDefault();
-       alert('Formulário pronto para integração com o gateway de pagamento (ex: Stripe, PagSeguro, Mercado Pago). Substitua este alerta pela chamada real de checkout.');
-     });
-   }
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') closeMenu();
+    });
+
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 860) closeMenu();
+    });
+  }
+
+  const amountButtons = document.querySelectorAll('.amount');
+  const amountInput = document.getElementById('valor-personalizado');
+
+  amountButtons.forEach((button) => {
+    button.addEventListener('click', () => {
+      amountButtons.forEach((item) => item.classList.remove('selected'));
+      button.classList.add('selected');
+      if (amountInput) amountInput.value = button.dataset.valor;
+    });
+  });
+
+  const donationForm = document.getElementById('form-doacao');
+  if (donationForm) {
+    donationForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      alert('Obrigado pelo apoio! Em um site publicado, este formulário pode ser ligado ao PIX, gateway de pagamento ou WhatsApp.');
+    });
+  }
+
+  const contactForm = document.getElementById('contact-form');
+  if (contactForm) {
+    contactForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      alert('Mensagem registrada. Em um site publicado, este formulário pode enviar para e-mail ou WhatsApp da escola.');
+    });
+  }
 });
