@@ -612,6 +612,12 @@ dd {
   font-weight: 800;
 }
 
+.whatsapp-float svg {
+  width: 34px;
+  height: 34px;
+  fill: currentColor;
+}
+
 .whatsapp-float:hover {
   transform: translateY(-2px);
 }
